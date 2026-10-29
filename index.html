@@ -28,10 +28,10 @@
         <div class="absolute inset-0 z-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/60"></div>
 
         <div class="relative z-10 flex-1 flex flex-col items-center justify-center p-6 text-center">
-            <!-- Logo Container -->
+            <!-- Icon Badge (بدون لوجو) -->
             <div class="mb-8 relative">
-                <div class="w-44 h-44 md:w-52 md:h-52 rounded-full bg-white p-3 shadow-2xl border-4 border-amber-500 flex items-center justify-center transform hover:scale-105 transition duration-300">
-                    <img src="ncw.jpg" alt="شعار المجلس القومي للمرأة" class="w-full h-full object-contain" onerror="this.src='https://i.ibb.co/68v8T6d/image-bd38f6.png'">
+                <div class="w-28 h-28 md:w-36 md:h-36 rounded-full bg-slate-800/80 p-4 shadow-2xl border-4 border-amber-500 flex items-center justify-center backdrop-blur-md transform hover:scale-105 transition duration-300">
+                    <i data-lucide="folder-archive" class="w-16 h-16 text-amber-400"></i>
                 </div>
             </div>
 
@@ -44,10 +44,10 @@
                     مرحباً بك في إدارة الموازنة
                 </h1>
                 <h2 class="text-xl md:text-2xl font-bold text-ncw-gold">
-                    المجلس القومي للمرأة[cite: 3]
+                    المجلس القومي للمرأة
                 </h2>
                 <p class="text-slate-300 text-sm md:text-base leading-relaxed pt-2 max-w-md mx-auto">
-                    المنصة المعتمدة لحفظ، استعراض، والبحث في المستندات المالية والخطوط التنظيمية (يعمل دون إنترنت).
+                    المنصة المعتمدة لحفظ، استعراض، والبحث في المستندات المالية والخطوط التنظيمية.
                 </p>
             </div>
 
@@ -71,12 +71,12 @@
         <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-40 border-b border-amber-600/30">
             <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-white p-1 border-2 border-amber-500 flex items-center justify-center shadow-md">
-                        <img src="ncw.jpg" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://i.ibb.co/68v8T6d/image-bd38f6.png'">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-md">
+                        <i data-lucide="files" class="w-5 h-5"></i>
                     </div>
                     <div>
                         <h1 class="text-lg font-bold leading-tight">إدارة الموازنة</h1>
-                        <p class="text-xs text-ncw-gold font-medium">المجلس القومي للمرأة[cite: 3]</p>
+                        <p class="text-xs text-ncw-gold font-medium">المجلس القومي للمرأة</p>
                     </div>
                 </div>
 
@@ -176,7 +176,7 @@
     <!-- Admin Password Modal -->
     <div id="adminModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-slate-100">
-            <h3 class="text-lg font-bold text-slate-900 mb-2">تسجيل دخول المسؤول (الأدمن)</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">تسجيل دخول المسئول (الأدمن)</h3>
             <p class="text-xs text-slate-500 mb-4">أدخل الرقم السري للتمكن من رفع وإدارة المستندات.</p>
             <input type="password" id="adminPassword" placeholder="كلمة السر..." class="w-full p-2.5 border border-slate-300 rounded-xl text-center text-lg tracking-widest mb-4 focus:ring-2 focus:ring-amber-500 outline-none">
             <div class="flex gap-2">
@@ -189,7 +189,6 @@
     <!-- App Logic -->
     <script>
         let isAdmin = false;
-        // تخزين البيانات محلياً للعمل بدون إنترنت
         let documents = JSON.parse(localStorage.getItem('ncw_documents') || '[]');
 
         window.addEventListener('online', updateOnlineStatus);
@@ -225,7 +224,7 @@
                 isAdmin = false;
                 document.getElementById('uploadSection').classList.add('hidden');
                 document.getElementById('adminBtnText').innerText = "دخول الأدمن";
-                alert("تم الخروج من وضع المسؤول");
+                alert("تم الخروج من وضع المسئول");
             } else {
                 document.getElementById('adminModal').classList.remove('hidden');
             }
@@ -270,12 +269,11 @@
             };
 
             documents.unshift(newDoc);
-            // حفظ فورى في الذاكرة المحلية ليعمل بدون إنترنت
             localStorage.setItem('ncw_documents', JSON.stringify(documents));
             renderDocs(documents);
             document.getElementById('uploadForm').reset();
             document.getElementById('docDate').value = new Date().toISOString().split('T')[0];
-            alert("تم رفع المستند بنجاح وحفظه في الأرشيف!");
+            alert("تم رفع المستند بنجاح!");
         }
 
         function renderDocs(docs) {
@@ -299,18 +297,12 @@
                         </div>
                         <p class="text-sm text-slate-700 font-medium mb-3 line-clamp-3">${doc.description}</p>
                     </div>
-                    <div class="space-y-2 pt-2 border-t border-slate-100">
-                        <span class="block text-xs text-slate-400 truncate">${doc.fileName}</span>
-                        <div class="grid grid-cols-2 gap-2">
-                            <a href="${doc.fileUrl}" target="_blank" class="flex items-center justify-center gap-1 text-xs text-slate-700 hover:text-slate-900 font-bold bg-slate-100 hover:bg-slate-200 py-2 rounded-lg transition">
-                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                <span>عرض المستند</span>
-                            </a>
-                            <a href="${doc.fileUrl}" download="${doc.fileName}" class="flex items-center justify-center gap-1 text-xs text-white font-bold bg-amber-600 hover:bg-amber-700 py-2 rounded-lg shadow-sm transition">
-                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                                <span>تحميل</span>
-                            </a>
-                        </div>
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-2">
+                        <span class="text-xs text-slate-400 truncate max-w-[140px]">${doc.fileName}</span>
+                        <a href="${doc.fileUrl}" target="_blank" download="${doc.fileName}" class="flex items-center gap-1.5 text-xs text-amber-700 hover:text-amber-800 font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-lg transition">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            <span>عرض / تنزيل</span>
+                        </a>
                     </div>
                 `;
                 container.appendChild(card);
