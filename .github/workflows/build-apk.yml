@@ -1,3 +1,4 @@
+
 name: Build Android APK
 
 on:
@@ -10,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout source
@@ -25,20 +26,18 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses
-
       - name: Install Android SDK packages
-        run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+        run: |
+          sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Build Android APK
         run: |
           cd AndroidProject
           if [ -f ./gradlew ]; then
             chmod +x ./gradlew
-            ./gradlew assembleDebug
+            ./gradlew --no-daemon assembleDebug
           else
-            gradle assembleDebug
+            gradle --no-daemon assembleDebug
           fi
 
       - name: Upload APK
@@ -46,3 +45,4 @@ jobs:
         with:
           name: NCW-Archive-APK
           path: AndroidProject/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
