@@ -14,25 +14,61 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
+      # 1. تحميل ملفات المشروع
       - name: Checkout source
         uses: actions/checkout@v4
 
+      # 2. إعداد Java
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
+      # 3. إعداد Android SDK يدويًا
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        run: |
+          echo "ANDROID_HOME=$RUNNER_TEMP/android-sdk" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$RUNNER_TEMP/android-sdk" >> $GITHUB_ENV
 
+          mkdir -p "$RUNNER_TEMP/android-sdk/cmdline-tools"
+
+          cd "$RUNNER_TEMP"
+
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-12266719_latest.zip
+
+          unzip -q commandlinetools-linux-12266719_latest.zip
+
+          mkdir -p "$RUNNER_TEMP/android-sdk/cmdline-tools/latest"
+
+          mv cmdline-tools/* "$RUNNER_TEMP/android-sdk/cmdline-tools/latest/"
+
+      # 4. قبول تراخيص Android SDK
+      - name: Accept Android SDK licenses
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            --sdk_root="$ANDROID_HOME" --licenses
+
+      # 5. تثبيت أدوات Android المطلوبة
       - name: Install Android SDK packages
         run: |
-          sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            --sdk_root="$ANDROID_HOME" \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
 
+      # 6. التحقق من ملفات المشروع
+      - name: Check Android project
+        run: |
+          ls -la AndroidProject
+          test -d AndroidProject/app
+
+      # 7. بناء تطبيق APK
       - name: Build Android APK
         run: |
           cd AndroidProject
+
           if [ -f ./gradlew ]; then
             chmod +x ./gradlew
             ./gradlew --no-daemon assembleDebug
@@ -40,6 +76,7 @@ jobs:
             gradle --no-daemon assembleDebug
           fi
 
+      # 8. رفع ملف APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
