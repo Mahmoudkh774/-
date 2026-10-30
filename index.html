@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأرشيف الإلكتروني - إدارة الموازنة | المجلس القومي للمرأة</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+        }
+        .bg-ncw-navy { background-color: #0d1b2a; }
+        .bg-ncw-gold { background-color: #c5a059; }
+        .text-ncw-gold { color: #c5a059; }
+        .border-ncw-gold { border-color: #c5a059; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between">
+
+    <!-- Screen 1: Welcome Screen -->
+    <div id="welcomeScreen" class="fixed inset-0 z-50 flex flex-col justify-between bg-slate-900 text-white overflow-y-auto">
+        <div class="absolute inset-0 z-0 opacity-40 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&q=80');"></div>
+        <div class="absolute inset-0 z-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-900/60"></div>
+
+        <div class="relative z-10 flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <!-- Icon Badge (بدون لوجو) -->
+            <div class="mb-8 relative">
+                <div class="w-28 h-28 md:w-36 md:h-36 rounded-full bg-slate-800/80 p-4 shadow-2xl border-4 border-amber-500 flex items-center justify-center backdrop-blur-md transform hover:scale-105 transition duration-300">
+                    <i data-lucide="folder-archive" class="w-16 h-16 text-amber-400"></i>
+                </div>
+            </div>
+
+            <!-- Titles -->
+            <div class="max-w-xl mx-auto space-y-3">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-300 text-sm font-semibold mb-2 backdrop-blur-md border border-amber-500/30">
+                    نظام الأرشفة والتوثيق الإلكتروني
+                </span>
+                <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-wide leading-tight">
+                    مرحباً بك في إدارة الموازنة
+                </h1>
+                <h2 class="text-xl md:text-2xl font-bold text-ncw-gold">
+                    المجلس القومي للمرأة
+                </h2>
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed pt-2 max-w-md mx-auto">
+                    المنصة المعتمدة لحفظ، استعراض، والبحث في المستندات المالية والخطوط التنظيمية.
+                </p>
+            </div>
+
+            <!-- Action Button -->
+            <div class="mt-10">
+                <button onclick="enterApp()" class="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-extrabold text-lg rounded-2xl shadow-xl transition-all duration-300 hover:shadow-amber-500/20 hover:-translate-y-0.5">
+                    <span>الدخول إلى أرشيف المستندات</span>
+                    <i data-lucide="arrow-left" class="w-6 h-6 group-hover:-translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="relative z-10 py-4 text-center text-xs text-slate-400 bg-slate-950/60 backdrop-blur-md">
+            جميع الحقوق محفوظة © المجلس القومي للمرأة - جمهورية مصر العربية
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="mainApp" class="hidden min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-40 border-b border-amber-600/30">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-md">
+                        <i data-lucide="files" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold leading-tight">إدارة الموازنة</h1>
+                        <p class="text-xs text-ncw-gold font-medium">المجلس القومي للمرأة</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span id="netStatus" class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> متصل
+                    </span>
+                    <button id="adminAuthBtn" onclick="openAdminModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 text-sm font-semibold transition">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                        <span id="adminBtnText">دخول الأدمن</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+            <!-- Upload Panel -->
+            <section id="uploadSection" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-amber-200">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-2 text-amber-700 font-bold text-lg">
+                        <i data-lucide="file-plus" class="w-6 h-6"></i>
+                        <h2>إضافة مستند جديد إلى الأرشيف</h2>
+                    </div>
+                    <span class="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-semibold">صلاحية أدمن (2106)</span>
+                </div>
+
+                <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">نوع المستند</label>
+                            <select id="docType" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="">اختر النوع...</option>
+                                <option value="مذكرة">مذكرة</option>
+                                <option value="خطاب">خطاب</option>
+                                <option value="بروتوكول أو اتفاقية منحة">بروتوكول أو اتفاقية منحة</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ الرفع</label>
+                            <input type="text" id="docDate" readonly class="w-full p-2.5 bg-slate-200 text-slate-600 border border-slate-300 rounded-xl text-sm font-bold cursor-not-allowed">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">وصف المستند</label>
+                        <textarea id="docDescription" rows="2" required placeholder="اكتب وصفاً توضيحياً للمستند..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">اختيار الملف (صورة أو PDF)</label>
+                        <input type="file" id="docFile" required class="w-full text-sm text-slate-500 file:ml-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white hover:file:bg-slate-800">
+                    </div>
+                    <div class="pt-2 flex justify-end">
+                        <button type="submit" id="submitBtn" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition">
+                            <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+                            <span>رفع المستند</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Search and Filter Bar -->
+            <section class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 absolute right-3 top-3.5 text-slate-400"></i>
+                        <input type="text" id="searchInput" oninput="filterDocs()" placeholder="البحث بوصف المستند..." class="w-full pr-9 pl-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div class="relative">
+                        <i data-lucide="filter" class="w-4 h-4 absolute right-3 top-3.5 text-slate-400"></i>
+                        <select id="filterType" onchange="filterDocs()" class="w-full pr-9 pl-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="">جميع الأنواع</option>
+                            <option value="مذكرة">مذكرة</option>
+                            <option value="خطاب">خطاب</option>
+                            <option value="بروتوكول أو اتفاقية منحة">بروتوكول أو اتفاقية منحة</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="relative">
+                        <i data-lucide="calendar" class="w-4 h-4 absolute right-3 top-3.5 text-slate-400"></i>
+                        <input type="date" id="filterDate" onchange="filterDocs()" class="w-full pr-9 pl-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documents List -->
+            <section class="space-y-3">
+                <div class="flex items-center justify-between text-slate-600 text-sm px-1">
+                    <span class="font-bold">قائمة المستندات المحفوظة</span>
+                    <span id="docCount" class="bg-slate-200 px-2.5 py-0.5 rounded-full text-xs font-semibold">0 مستندات</span>
+                </div>
+                <div id="docsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Admin Password Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-900 mb-2">تسجيل دخول المسئول (الأدمن)</h3>
+            <p class="text-xs text-slate-500 mb-4">أدخل الرقم السري للتمكن من رفع وإدارة المستندات.</p>
+            <input type="password" id="adminPassword" placeholder="كلمة السر..." class="w-full p-2.5 border border-slate-300 rounded-xl text-center text-lg tracking-widest mb-4 focus:ring-2 focus:ring-amber-500 outline-none">
+            <div class="flex gap-2">
+                <button onclick="checkAdminPassword()" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-xl text-sm">تأكيد</button>
+                <button onclick="closeAdminModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-sm">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Logic: يعمل داخل Google Apps Script HTML Service -->
+    <script>
+      let isAdmin = false;
+      let documents = [];
+      const CACHE_KEY = 'ncw_archive_offline_cache_v2';
+      const FILE_CACHE_KEY = 'ncw_archive_offline_files_v2';
+      const $ = id => document.getElementById(id);
+      const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+      function gasCall(method, ...args) {
+        return new Promise((resolve, reject) => {
+          if (!window.google || !google.script || !google.script.run) {
+            reject(new Error('يجب فتح التطبيق من رابط Google Apps Script المنشور، وليس من رابط GitHub Pages.'));
+            return;
+          }
+          google.script.run.withSuccessHandler(resolve).withFailureHandler(err => reject(new Error(err && err.message ? err.message : String(err))))[method](...args);
+        });
+      }
+      function localDocs() { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '[]'); } catch(e) { return []; } }
+      function saveLocalDocs() { try { localStorage.setItem(CACHE_KEY, JSON.stringify(documents)); } catch(e) {} }
+      function localFiles() { try { return JSON.parse(localStorage.getItem(FILE_CACHE_KEY) || '{}'); } catch(e) { return {}; } }
+      function setLocalFile(id, file) { try { const all=localFiles(); all[id]=file; localStorage.setItem(FILE_CACHE_KEY, JSON.stringify(all)); } catch(e) { alert('تم الحفظ على Google Drive، لكن تعذر حفظ نسخة دون إنترنت بسبب مساحة التخزين المحلية.'); } }
+
+      window.addEventListener('online', updateOnlineStatus);
+      window.addEventListener('offline', updateOnlineStatus);
+      function updateOnlineStatus() {
+        const el = $('netStatus'); if (!el) return;
+        if (navigator.onLine) { el.innerHTML='<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> متصل'; el.className='text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold flex items-center gap-1'; }
+        else { el.innerHTML='<span class="w-2 h-2 rounded-full bg-amber-400"></span> دون اتصال (النسخة المحلية)'; el.className='text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-semibold flex items-center gap-1'; }
+      }
+      function initApp() {
+        if (window.lucide) lucide.createIcons();
+        $('docDate').value = new Date().toISOString().split('T')[0];
+        documents = localDocs(); renderDocs(documents); updateOnlineStatus();
+        if (navigator.onLine) refreshDocs();
+      }
+      async function refreshDocs() {
+        try { const cloud = await gasCall('listDocuments'); documents = cloud; saveLocalDocs(); renderDocs(documents); }
+        catch(err) { updateOnlineStatus(); if (!documents.length) console.warn(err); }
+      }
+      function enterApp() {
+        $('welcomeScreen').classList.add('hidden'); $('mainApp').classList.remove('hidden'); initApp();
+      }
+      function openAdminModal() {
+        if (isAdmin) { isAdmin=false; $('uploadSection').classList.add('hidden'); $('adminBtnText').innerText='دخول الأدمن'; alert('تم الخروج من وضع المسئول'); }
+        else { $('adminModal').classList.remove('hidden'); $('adminPassword').focus(); }
+      }
+      function closeAdminModal() { $('adminModal').classList.add('hidden'); }
+      async function checkAdminPassword() {
+        const pass = $('adminPassword').value;
+        try {
+          const ok = await gasCall('verifyAdminPassword', pass);
+          if (ok) { isAdmin=true; window.currentAdminPassword=pass; $('uploadSection').classList.remove('hidden'); $('adminBtnText').innerText='خروج الأدمن'; closeAdminModal(); $('adminPassword').value=''; }
+          else alert('كلمة المرور غير صحيحة.');
+        } catch(err) { alert('تعذر التحقق: ' + err.message); }
+      }
+      function readAsBase64(file) {
+        return new Promise((resolve,reject)=>{ const r=new FileReader(); r.onload=()=>resolve(String(r.result).split(',')[1]||''); r.onerror=()=>reject(new Error('تعذرت قراءة الملف')); r.readAsDataURL(file); });
+      }
+      async function handleUpload(e) {
+        e.preventDefault();
+        if (!isAdmin || !window.currentAdminPassword) { alert('سجّل دخول الأدمن أولًا.'); return; }
+        if (!navigator.onLine) { alert('رفع المستندات إلى Google Drive يحتاج إلى اتصال بالإنترنت.'); return; }
+        const file = $('docFile').files[0]; if (!file) return;
+        const btn=$('submitBtn'); btn.disabled=true; btn.querySelector('span').innerText='جارٍ الحفظ على Drive...';
+        try {
+          const base64=await readAsBase64(file);
+          const payload={type:$('docType').value,date:$('docDate').value,description:$('docDescription').value,fileName:file.name,mimeType:file.type||'application/octet-stream',base64,adminPassword:window.currentAdminPassword};
+          const saved=await gasCall('uploadDocument',payload);
+          // الاحتفاظ بنسخة محلية اختيارية لفتح المستند عند انقطاع الإنترنت.
+          setLocalFile(saved.id,{fileName:file.name,mimeType:payload.mimeType,base64});
+          documents.unshift(saved); saveLocalDocs(); renderDocs(documents); $('uploadForm').reset(); $('docDate').value=new Date().toISOString().split('T')[0];
+          alert('تم حفظ المستند على Google Drive بنجاح، وحُفظت نسخة محلية إن سمحت مساحة الجهاز.');
+        } catch(err) { alert('تعذر حفظ المستند: '+err.message); }
+        finally { btn.disabled=false; btn.querySelector('span').innerText='رفع المستند'; }
+      }
+      function renderDocs(docs) {
+        const container=$('docsContainer'); $('docCount').innerText=`${docs.length} مستندات`; container.innerHTML='';
+        if (!docs.length) { container.innerHTML='<div class="col-span-full text-center py-8 text-slate-400">لا توجد مستندات مسجلة في الأرشيف حالياً</div>'; return; }
+        docs.forEach(doc=>{
+          const card=document.createElement('div'); card.className='bg-white p-4 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between';
+          card.innerHTML=`<div><div class="flex items-center justify-between mb-2"><span class="text-xs font-bold px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200/50">${esc(doc.type)}</span><span class="text-xs text-slate-400 font-mono">${esc(doc.date)}</span></div><p class="text-sm text-slate-700 font-medium mb-3">${esc(doc.description)}</p></div><div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-2 gap-2"><span class="text-xs text-slate-400 truncate max-w-[140px]">${esc(doc.fileName)}</span><button type="button" data-doc-id="${esc(doc.id)}" class="download-doc flex items-center gap-1.5 text-xs text-amber-700 font-bold bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">عرض / تنزيل</button></div>`;
+          container.appendChild(card);
+        });
+        container.querySelectorAll('.download-doc').forEach(btn=>btn.addEventListener('click',()=>downloadDoc(btn.dataset.docId)));
+        if(window.lucide) lucide.createIcons();
+      }
+      async function downloadDoc(id) {
+        try {
+          let item=localFiles()[id];
+          if (!item && navigator.onLine) { item=await gasCall('downloadDocument',id); setLocalFile(id,item); }
+          if (!item || !item.base64) { alert('الملف غير محفوظ على هذا الجهاز. اتصل بالإنترنت لتنزيله من Google Drive أول مرة.'); return; }
+          const bytes=Uint8Array.from(atob(item.base64),c=>c.charCodeAt(0)); const blob=new Blob([bytes],{type:item.mimeType||'application/octet-stream'});
+          const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=item.fileName||'document'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
+        } catch(err) { alert('تعذر تنزيل المستند: '+err.message); }
+      }
+      function filterDocs() {
+        const text=$('searchInput').value.toLowerCase(); const type=$('filterType').value; const date=$('filterDate').value;
+        renderDocs(documents.filter(doc=>(doc.description||'').toLowerCase().includes(text)&&(type===''||doc.type===type)&&(date===''||doc.date===date)));
+      }
+      document.addEventListener('keydown',e=>{ if(e.key==='Enter' && $('adminModal') && !$('adminModal').classList.contains('hidden')) checkAdminPassword(); });
+    </script>
+</body>
+</html>
